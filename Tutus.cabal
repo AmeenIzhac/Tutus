@@ -1,0 +1,104 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.37.0.
+--
+-- see: https://github.com/sol/hpack
+
+name:           Tutus
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/githubuser/TutusProject#readme>
+homepage:       https://github.com/githubuser/TutusProject#readme
+bug-reports:    https://github.com/githubuser/TutusProject/issues
+author:         Author name here
+maintainer:     example@example.com
+copyright:      2022 Author name here
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    CHANGELOG.md
+
+source-repository head
+  type: git
+  location: https://github.com/githubuser/TutusProject
+
+library
+  exposed-modules:
+      BaseUtils
+      Core
+      Effpi
+      EffpiIR
+      ErrOr
+      GracefulFailure
+      IR
+      Parser
+      ParserUtils
+      PPrinter
+      Projection
+      Scala
+      Utils
+  other-modules:
+      Paths_Tutus
+  hs-source-dirs:
+      src
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -Wno-unused-local-binds
+  build-depends:
+      base >=4.7 && <5
+    , clock
+    , cmdargs
+    , deepseq
+    , directory
+    , filepath
+    , list-predicate
+    , parsec
+    , pretty-simple
+    , text
+    , time
+  default-language: Haskell2010
+
+executable Tutus
+  main-is: Main.hs
+  hs-source-dirs:
+      app
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -Wno-unused-local-binds -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      Tutus
+    , base >=4.7 && <5
+    , clock
+    , cmdargs
+    , deepseq
+    , directory
+    , filepath
+    , list-predicate
+    , parsec
+    , pretty-simple
+    , text
+    , time
+  default-language: Haskell2010
+
+benchmark Tutus-bench
+  type: exitcode-stdio-1.0
+  main-is: Main.hs
+  other-modules:
+      Paths_Tutus
+  hs-source-dirs:
+      benchmark
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -Wno-unused-local-binds -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      Tutus
+    , base >=4.7 && <5
+    , bytestring
+    , cassava
+    , clock
+    , cmdargs
+    , criterion
+    , deepseq
+    , directory
+    , filepath
+    , list-predicate
+    , parsec
+    , pretty-simple
+    , text
+    , time
+  default-language: Haskell2010
