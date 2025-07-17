@@ -8,7 +8,7 @@ import Parser ( parseFile )
 import Effpi ( effpiGIO, Verbosity(Quiet, Loud) )
 import PPrinter ( ppG, ppRSList )
 import Control.DeepSeq (deepseq, force)
-
+import Failover ( fo )
 import System.Directory ( createDirectoryIfMissing, doesFileExist )
 import System.FilePath ( takeBaseName )
 import System.Console.CmdArgs
@@ -120,7 +120,21 @@ execFile _opts@MyOptions{..} = do
         putStrLn ""
         when refactorgf $ do
           start <- getTime Monotonic
-          let result = gf g
+          let result = gf "GF" g 
+          end <- result `deepseq` getTime Monotonic
+          putStrLn (showG result)
+          projAllRoles result `deepseq` return ()
+          print (toNanoSecs (diffTimeSpec end start) `div` 1000)  
+        when refactorlgf $ do
+          start <- getTime Monotonic
+          let result = gf "LGF" g 
+          end <- result `deepseq` getTime Monotonic
+          putStrLn (showG result)
+          projAllRoles result `deepseq` return ()
+          print (toNanoSecs (diffTimeSpec end start) `div` 1000)  
+        when refactorlgf $ do
+          start <- getTime Monotonic
+          let result = fo 1 g
           end <- result `deepseq` getTime Monotonic
           putStrLn (showG result)
           projAllRoles result `deepseq` return ()

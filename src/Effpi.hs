@@ -372,7 +372,7 @@ isQuiet _ = False
 effpiGIO :: Verbosity -> ProtocolName -> G () -> IO ()
 effpiGIO verbosity name g = do
   let fname = "scala/" </> (name ++ ".scala")
-  case fmap ((++ "\n") . toScala) (effpiG name g) of
+  case fmap ((++ "\n") . toScala Nothing) (effpiG name g) of
     Err err -> do
       unless (isQuiet verbosity) (putStrLn ("Error generating Scala: " ++ err))
       when (isQuiet verbosity) (error ("Error generating Scala: " ++ err))

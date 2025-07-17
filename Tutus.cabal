@@ -27,9 +27,11 @@ library
   exposed-modules:
       BaseUtils
       Core
+      DataStructs
       Effpi
       EffpiIR
       ErrOr
+      Failover
       GracefulFailure
       IR
       Parser
@@ -47,6 +49,7 @@ library
       base >=4.7 && <5
     , clock
     , cmdargs
+    , containers
     , deepseq
     , directory
     , filepath
@@ -67,6 +70,7 @@ executable Tutus
     , base >=4.7 && <5
     , clock
     , cmdargs
+    , containers
     , deepseq
     , directory
     , filepath
@@ -92,6 +96,7 @@ benchmark Tutus-bench
     , cassava
     , clock
     , cmdargs
+    , containers
     , criterion
     , deepseq
     , directory

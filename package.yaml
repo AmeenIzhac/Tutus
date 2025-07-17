@@ -29,6 +29,7 @@ dependencies:
 - pretty-simple
 - text
 - deepseq
+- containers
 - time
 - clock
 

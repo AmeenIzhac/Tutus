@@ -85,34 +85,6 @@ showG' (GRec _ g) i = indentBy i ++ "rec X {\n" ++ showG' g (i + 1) ++ indentBy 
 showG' (GVar _ _) i = indentBy i ++ "continue X;\n"
 showG' GEnd _ = ""
 
--- showS :: S a -> String
--- showS s = signature ++ protocol ++ "}"
---   where
---     roles = showRoles (rolesS s)
---     signature = "local protocol someProtocol(" ++ roles ++ ") {\n"
---     protocol = showS' s 1
-
--- showS' :: S a -> Int -> String
--- showS' (SRecv r _ cs) i
---   | length cs == 1 = ppsc
---   | otherwise = indentBy i ++ "choice at " ++ show r ++ " {\n" ++ ppc ++ indentBy i ++ "}" ++ concatMap (\ppc' -> " or {\n" ++ ppc' ++ indentBy i ++ "}") ppcs' ++ "\n"
---   where
---     ppcs@(ppc : ppcs') = map (\(Choice l p c) -> indentBy (i + 1) ++ showChoiceWithoutContinuation (Choice l p c) ++ showS' c (i + 1)) cs
---     (ppsc : _) = map (\(Choice l p c) -> indentBy i ++ showChoiceWithoutContinuation (Choice l p c) ++ showS' c i) cs
---     showChoiceWithoutContinuation (Choice l BUnit _) = show l ++ " from " ++ show r ++ ";\n"
---     showChoiceWithoutContinuation (Choice l p _) = show l ++ "(" ++ show p ++ ") from " ++ show r ++ ";\n"
--- showS' (SSend r _ cs) i
---   | length cs == 1 = ppsc
---   | otherwise = indentBy i ++ "choice at " ++ show r ++ " {\n" ++ ppc ++ indentBy i ++ "}" ++ concatMap (\ppc' -> " or {\n" ++ ppc' ++ indentBy i ++ "}") ppcs' ++ "\n"
---   where
---     ppcs@(ppc : ppcs') = map (\(Choice l p c) -> indentBy (i + 1) ++ showChoiceWithoutContinuation (Choice l p c) ++ showS' c (i + 1)) cs
---     (ppsc : _) = map (\(Choice l p c) -> indentBy i ++ showChoiceWithoutContinuation (Choice l p c) ++ showS' c i) cs
---     showChoiceWithoutContinuation (Choice l BUnit _) = show l ++ " to " ++ show r ++ ";\n"
---     showChoiceWithoutContinuation (Choice l p _) = show l ++ "(" ++ show p ++ ") to " ++ show r ++ ";\n"
--- showS' (SRec _ s) i = indentBy i ++ "rec X {\n" ++ showS' s (i + 1) ++ indentBy i ++ "}\n"
--- showS' (SVar _ _) i = indentBy i ++ "continue X;\n"
--- showS' SEnd _ = ""
-
 indentBy :: Int -> String
 indentBy 0 = ""
 indentBy i = "    " ++ indentBy (i - 1)
@@ -131,3 +103,9 @@ showRoles [r@(MkRole _ _ R )] = "reliable role " ++ show r
 showRoles [r] = "role " ++ show r
 showRoles (r@(MkRole _ _ R ) : rs) = "reliable role " ++ show r ++ ", " ++ showRoles rs
 showRoles (r : rs) = "role " ++ show r ++ ", " ++ showRoles rs
+
+tounitG :: G a -> G ()
+tounitG (GComm p q a cs) = GComm p q () [Choice l p' (tounitG g) | (Choice l p' g) <- cs]
+tounitG (GRec a g) = GRec () (tounitG g)
+tounitG (GVar n a) = GVar n ()
+tounitG GEnd = GEnd

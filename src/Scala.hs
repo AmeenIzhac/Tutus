@@ -1,7 +1,7 @@
 module Scala ( toScala ) where
 
 import BaseUtils (parens, brackets, pfxStr, inc, prefix, spacer, firstLower)
-import Core ( B(..), Label(CrashLab) )
+import Core
 import Utils (isCrashLabel)
 import EffpiIR
     ( BaseName,
@@ -18,7 +18,7 @@ import EffpiIR
       CClass(..) )
 
 import Numeric.Natural (Natural)
-import Data.List (intercalate, sort)
+import Data.List (intercalate, sort, nub)
 import Data.Maybe (mapMaybe)
 
 -- [CodeGen] ------------------------------------------------------------------
@@ -260,8 +260,8 @@ ppTyDecl n0 (Decl _ n cs ks) = concat
     f (l,_) = Just (show l)
     rest = if null cs then "" else  ", " ++ ppChUBTys cs
 
-ppRoleTys :: [RoleTy] -> String
-ppRoleTys xs = intercalate spacer (map f xs) where
+ppRoleTys :: Maybe [(Effpi, Role, [Label], String)] -> [RoleTy] -> String
+ppRoleTys _ xs = intercalate spacer (map f xs) where
   f (MkRoleTy n cs body decls) = concat
     ["type ", n, brackets (ppChUBTys cs), " = ",
      ppTyBody n 0 body,
@@ -299,8 +299,8 @@ ppFnDecl n0 (Decl _ n cs ks) = concat
     h (InChan j _) = "c" ++ show j ++ ".type"
     h (OutChan j _) = "c" ++ show j ++ ".type"
 
-ppRoleFns :: [RoleTy] -> String
-ppRoleFns xs = "implicit val timeout: Duration = Duration(\"60 seconds\")"
+ppRoleFns :: Maybe [(Effpi, Role, [Label], String)] -> [RoleTy] -> String
+ppRoleFns _ xs = "implicit val timeout: Duration = Duration(\"60 seconds\")"
             ++ spacer ++ intercalate spacer (map f xs) where
   f (MkRoleTy n cs body decls) = concat
     ["def ", toFnName n, parens (ppChUBArgs cs),
@@ -348,14 +348,21 @@ ppMainFn (MkMain cs rs) = concat
    "}"
   ]
 
-toScala :: Effpi -> String
-toScala x = intercalate spacer
+toScala :: Maybe [(Effpi, Role, [Label], String)] -> Effpi -> String
+toScala crpls x = intercalate spacer
   [ppPackage ("effpi_sandbox." ++ pname x),
    ppImports (ports x),
-   ppCClasses (cases x),
+   ppCClasses (nub (cases x ++ cases')),
    ppRecDefs (recvs x),
-   ppRoleTys (types x),
-   ppRoleFns (types x),
+   ppRoleTys crpls (types x ++ types'),
+   ppRoleFns crpls (types x ++ types'),
    ppMainFn (mainf x)
   ]
+  where
+    cases' = case crpls of
+      Just crpls' -> concatMap (\(e, _, _, _) -> cases e) crpls'
+      Nothing -> []
+    types' = case crpls of
+      Just crpls' -> concatMap (\(e, _, _, _) -> types e) crpls'
+      Nothing -> []
 

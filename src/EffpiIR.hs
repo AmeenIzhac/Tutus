@@ -84,7 +84,7 @@ instance Ord AnnotS where
 type Import = String
 
 -- | Case classes
-data CClass = MkCClass String (Maybe String) deriving (Show, Generic, NFData)
+data CClass = MkCClass String (Maybe String) deriving (Show, Eq, Generic, NFData)
 
 -- | Channel-label dictionary
 data ChanMap = BaseChan Natural [Label]
