@@ -28,7 +28,7 @@ The following command will apply the Graceful Failure pattern to the first examp
 The output consists of the refactored protocol followed by an integer representing the refactoring time in microseconds.
 To apply other patterns you may use the following options:
 
-```--refactorlgf```
+```--refactorlgf``` to apply the Graceful Failure Pattern
 
 ### Applying Crash Handing Patterns to Scribble
 
