@@ -2,7 +2,6 @@
 module Failover where
 
 import Control.Exception (evaluate)
-import Control.Monad (foldM)
 import Core
 import Data.List (nub)
 import qualified Data.Map as Map
@@ -18,40 +17,29 @@ import EffpiIR
       Effpi(..) )
 import Scala (toScala)
 import Effpi (effpiG)
--- Map from Role to a list of Labels
-type RoleLabelMap = Map.Map Role [Label]
-addLabelToRole :: Label -> Role -> RoleLabelMap -> RoleLabelMap
-addLabelToRole l role rlm = Map.insert role (l : ls) rlm
-  where ls = Map.findWithDefault [] role rlm
-
--- Add a label to the front of multiple roles' label lists in the map
-addLabelToRoles :: Label -> [Role] -> RoleLabelMap -> RoleLabelMap
-addLabelToRoles l roles rlm = foldr (addLabelToRole l) rlm roles
-
-lookupRoleLabel :: Role -> RoleLabelMap -> [Label]
-lookupRoleLabel role rlm = Map.findWithDefault [] role rlm
-
-
-
-
-
+import Control.Monad (foldM)
+import DataStructs
 
 fo :: Int -> G a -> G a
-fo v g = fo' v [] 0 GEnd g 
+fo m g = fo' m [] 0 GEnd g 
 
+-- tcs are the traces
 fo' :: Int ->[Int] -> Int -> G a -> G a -> G a
-fo' v is j t (GComm p q a cs) 
+fo' m is j t (GComm p q a cs) 
   | reliable p = (GComm p q a cs')
-  | otherwise    = (GComm p q a (cs' ++ [cr]))
+  | otherwise  = (GComm p q a (cs' ++ [cr]))
   where
-    steps = map (\(Choice l p' _) -> extend t (GComm p q a [(Choice l p' GEnd)])) cs
-    xs    = zip3 cs [0..] steps
-    cs'   = map (\(Choice l p g, n, s) -> Choice l p (fo' v (is ++ [n]) (j + 1) s g)) xs
-    cr    = Choice CrashLab BUnit (newp v p is j (extend (trim p t) (GComm p q a cs)))
-    -- cr    = Choice CrashLab BUnit (fo' v (is ++ [length cs]) (j + 1) GEnd (newp v p is j (extend (trim p t) (GComm p q a cs))))
-fo' v is j t (GRec a g) = GRec a (fo' v is j (extend t (GRec a g)) g)
-fo' v is j t (GVar n a) = GVar n a
-fo' v is j t GEnd = GEnd
+    ts  = map (\(Choice l p' _) -> 
+                extend t (GComm p q a [(Choice l p' GEnd)])) 
+               cs
+    cs' = zipWith3 (\(Choice l p g) n t -> 
+                     Choice l p (fo' m (is ++ [n]) (j + 1) t g)) 
+                    cs [0..] ts
+    cr  = Choice CrashLab BUnit (newp m p is j (extend (trim p t) (GComm p q a cs)))
+    -- cr    = Choice CrashLab BUnit (fo' m (is ++ [length cs]) (j + 1) GEnd (newp m p is j (extend (trim p t) (GComm p q a cs))))
+fo' m is j t (GRec a g) = GRec a (fo' m is j (extend t (GRec a g)) g)
+fo' m is j t (GVar n a) = GVar n a
+fo' m is j t GEnd = GEnd
 
 trim :: Role -> G a -> G a
 trim r (GComm p q a [Choice l p' g]) 
@@ -70,18 +58,18 @@ extend (GVar n a) g = error "Error 3"
 extend (GRec a g) g' = GRec a g
 
 newp :: Int -> Role -> [Int] -> Int -> G a -> G a
-newp v crd is j t 
-  | null is   = newp' v crd ("_" ++ show j) t
-  | otherwise = newp' v crd ("_" ++ show j ++ "_" ++ concatMap show is) t
+newp m crd is j t 
+  | null is   = newp' m crd ("_" ++ show j) t
+  | otherwise = newp' m crd ("_" ++ show j ++ "_" ++ concatMap show is) t
 
 newp' :: Int -> Role -> String -> G a -> G a
-newp' v crd s (GComm p q a cs) 
-  | v == 2   = GComm (newr s p) (newr s q) a (map (\(Choice l p g) -> Choice l p (newp' v crd s g)) cs)
-  | p == crd = GComm (newr s p) q a (map (\(Choice l p g) -> Choice l p (newp' v crd s g)) cs)
-  | q == crd = GComm p (newr s q) a (map (\(Choice l p g) -> Choice l p (newp' v crd s g)) cs)
-  | otherwise = GComm p q a (map (\(Choice l p g) -> Choice l p (newp' v crd s g)) cs)
-newp' v crd s (GRec a g) = GRec a (newp' v crd s g)
-newp' v crd _ e = e
+newp' m crd s (GComm p q a cs) 
+  | m == 2   = GComm (newr s p) (newr s q) a (map (\(Choice l p g) -> Choice l p (newp' m crd s g)) cs)
+  | p == crd = GComm (newr s p) q a (map (\(Choice l p g) -> Choice l p (newp' m crd s g)) cs)
+  | q == crd = GComm p (newr s q) a (map (\(Choice l p g) -> Choice l p (newp' m crd s g)) cs)
+  | otherwise = GComm p q a (map (\(Choice l p g) -> Choice l p (newp' m crd s g)) cs)
+newp' m crd s (GRec a g) = GRec a (newp' m crd s g)
+newp' m crd _ e = e
 
 newr :: String -> Role -> Role 
 newr s (MkRole i n r) = MkRole (i + 100000) (n ++ s) R

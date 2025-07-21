@@ -1,4 +1,39 @@
-# HsDottyGen
+# Tutus Artefact README
+
+Our paper introduces Tutus, a code generation tool for applying crash handling  
+patterns to Scribble protocols, and generating corresponding Scala code using
+the Effpi concurrency library.
+
+## Quick Start
+
+### macOS 🍎
+Install Homebrew if it's not already installed, then run:
+
+```brew install haskell-stack```
+
+### Windows
+
+Download the Stack installer from the official site:  https://get.haskellstack.org/stable/windows-x86_64-installer.exe
+
+### Build the project
+
+```stack build```
+
+## Running the Tool
+
+The following command will apply the Graceful Failure pattern to the first example protocol in the scribble/ folder:
+
+```stack exec Tutus -- --file=scribble/a_PingPongAll.nuscr --refactorgf```
+
+The output consists of the refactored protocol followed by an integer representing the refactoring time in microseconds.
+To apply other patterns you may use the following options:
+
+```--refactorlgf```
+
+### Applying Crash Handing Patterns to Scribble
+
+You can execute Tutus 
+
 
 A quick (and partial) mockup of Fangyi's projection function to help speed up
 experimenting with examples. Doing this by hand takes too long, and I don't

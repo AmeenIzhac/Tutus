@@ -20,12 +20,19 @@ module DataStructs
     lookupQueue,
     insertIntoQueue,
     customUpdate,
+    -- RoleLabelMap operations
+    RoleLabelMap,
+    addLabelToRole,
+    addLabelToRoles,
+    lookupRoleLabel,
   )
 where
 
 import qualified Data.Map as Map
 import Data.Maybe (fromMaybe)
 import Data.Set
+import Core
+
 
 type SetMap t = Map.Map t (Set t)
 
@@ -75,22 +82,30 @@ insertIntoQueue key val (MapOfQueues m) =
    in MapOfQueues (Map.insert key (enqueue val queue) m)
 
 customUpdate :: (Ord k) => k -> k -> Set k -> MapOfQueues k k -> MapOfQueues k k
-customUpdate p q crd aw
-  | p `member` crd = insertIntoQueue p p (insertIntoQueue q p aw)
-  | not (p `member` crd) && lookupQueue p aw /= emptyQueue =
+customUpdate p q crs aw
+  | p `member` crs = insertIntoQueue p p (insertIntoQueue q p aw)
+  | not (p `member` crs) && lookupQueue p aw /= emptyQueue =
       case lastElement (lookupQueue p aw) of
         Just val -> insertIntoQueue q val aw
         Nothing -> aw
   | otherwise = aw
 
--- Convert Queue to List for easier manipulation
 queueToList :: Queue a -> [a]
 queueToList (Queue xs) = xs
 
--- Find intersection between two queues
 queueIntersection :: Eq a => Queue a -> Queue a -> Queue a
 queueIntersection (Queue xs) (Queue ys) = Queue (Prelude.filter (`elem` ys) xs)
 
--- Check if two queues have any common elements
 hasQueueIntersection :: Eq a => Queue a -> Queue a -> Bool
 hasQueueIntersection q1 q2 = not . Prelude.null $ queueToList (queueIntersection q1 q2)
+
+type RoleLabelMap = Map.Map Role [Label]
+addLabelToRole :: Label -> Role -> RoleLabelMap -> RoleLabelMap
+addLabelToRole l role rlm = Map.insert role (l : ls) rlm
+  where ls = Map.findWithDefault [] role rlm
+
+addLabelToRoles :: Label -> [Role] -> RoleLabelMap -> RoleLabelMap
+addLabelToRoles l roles rlm = Prelude.foldr (addLabelToRole l) rlm roles
+
+lookupRoleLabel :: Role -> RoleLabelMap -> [Label]
+lookupRoleLabel role rlm = Map.findWithDefault [] role rlm
