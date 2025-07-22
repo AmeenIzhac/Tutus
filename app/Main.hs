@@ -8,7 +8,7 @@ import Parser ( parseFile )
 import Effpi ( effpiGIO, Verbosity(Quiet, Loud) )
 import PPrinter ( ppG, ppRSList )
 import Control.DeepSeq (deepseq, force)
-import Failover ( fo )
+import Failover ( fo, foend2end )
 import System.Directory ( createDirectoryIfMissing, doesFileExist )
 import System.FilePath ( takeBaseName )
 import System.Console.CmdArgs
@@ -45,6 +45,7 @@ data MyOptions = MyOptions {
     refactorgf :: Bool,
     refactorlgf :: Bool,
     refactorfo :: Bool,
+    refactor_effpifo :: Bool,
     effpi   :: Bool,
     effpifo   :: Bool,
     refactoreffpifo :: Bool
@@ -59,6 +60,7 @@ myProgOpts = MyOptions {
     refactorgf = def &= help "Refactor Scribble protocol with Graceful Failure Pattern",
     refactorlgf = def &= help "Refactor Scribble protocol with LGF Pattern",
     refactorfo = def &= help "Refactor Scribble protocol with FO Pattern",
+    refactor_effpifo = def &= help "Directly generate Effpi Scala skeleton code from a Scribble protocol",
     effpi = def &= help "Generate Effpi Scala skeleton code from Scribble protocol for mergeable Scribble protocol",
     effpifo = def &= help "Generate Effpi Scala skeleton code from Scribble protocol for Failover Scribble protocol",
     refactoreffpifo = def &= help "Generate Effpi Scala skeleton code with Failover from Original Scribble protocol"
@@ -132,11 +134,17 @@ execFile _opts@MyOptions{..} = do
           putStrLn (showG result)
           projAllRoles result `deepseq` return ()
           print (toNanoSecs (diffTimeSpec end start) `div` 1000)  
-        when refactorlgf $ do
+        when refactorfo $ do
           start <- getTime Monotonic
           let result = fo 1 g
           end <- result `deepseq` getTime Monotonic
           putStrLn (showG result)
-          projAllRoles result `deepseq` return ()
           print (toNanoSecs (diffTimeSpec end start) `div` 1000)  
+        when refactor_effpifo $ do
+          let scribble_result = fo 2 g
+          start <- getTime Monotonic
+          let result = foend2end scribble_result
+          end <- result `deepseq` getTime Monotonic
+          putStrLn result
+          print (toNanoSecs (diffTimeSpec end start) `div` 1000)
 
