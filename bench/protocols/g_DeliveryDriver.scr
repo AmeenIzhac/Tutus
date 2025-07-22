@@ -1,0 +1,29 @@
+global protocol deliveryDriver(role Customer, role DeliveryCenter, role Driver) {
+    orderRequest from Customer to DeliveryCenter;
+    orderAcknowledged from DeliveryCenter to Customer;
+    
+    assignDelivery from DeliveryCenter to Driver;
+    deliveryAccepted from Driver to DeliveryCenter;
+    
+    pickupScheduled from DeliveryCenter to Customer;
+    readyForPickup from Customer to DeliveryCenter;
+    
+    pickupConfirmation from DeliveryCenter to Driver;
+    arrivedAtPickupLocation from Driver to DeliveryCenter;
+    
+    pickupVerified from DeliveryCenter to Driver;
+    itemPickedUp from Driver to DeliveryCenter;
+    departureNotification from Driver to DeliveryCenter;
+    
+    inTransitUpdate from Driver to DeliveryCenter;
+    deliveryETAUpdate from DeliveryCenter to Customer;
+    
+    arrivedAtDestination from Driver to DeliveryCenter;
+    deliveryNotification from DeliveryCenter to Customer;
+    
+    deliveryConfirmation from Customer to DeliveryCenter;
+    deliveryConfirmed from Driver to DeliveryCenter;
+    
+    feedbackRequest from DeliveryCenter to Customer;
+    feedbackProvided from Customer to DeliveryCenter;
+}

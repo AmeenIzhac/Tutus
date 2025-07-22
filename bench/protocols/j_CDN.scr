@@ -1,0 +1,94 @@
+global protocol ContentDeliveryNetwork(
+    role OriginServer, 
+    role EdgeServerEU, 
+        role EUUser1, 
+        role EUUser2,
+        role EUUser3,
+        role EUUser4,
+        role EUUser5,
+    role EdgeServerNA, 
+        role NAUser1, 
+        role NAUser2,
+        role NAUser3,
+        role NAUser4,
+        role NAUser5,
+    role EdgeServerSA, 
+        role SAUser1, 
+        role SAUser2,
+        role SAUser3,
+        role SAUser4,
+        role SAUser5,
+    role EdgeServerAPAC, 
+        role APACUser1, 
+        role APACUser2,
+        role APACUser3,
+        role APACUser4,
+        role APACUser5,
+    role EdgeServerMEA, 
+        role MEAUser1, 
+        role MEAUser2,
+        role MEAUser3,
+        role MEAUser4,
+        role MEAUser5
+    ) {
+        FilmRequest from EUUser1 to EdgeServerEU;
+        TVSeriesRequest from EUUser2 to EdgeServerEU;
+        FilmRequest from EUUser3 to EdgeServerEU;
+        TVSeriesRequest from EUUser4 to EdgeServerEU;
+        FilmRequest from EUUser5 to EdgeServerEU;
+        BatchRequest from EdgeServerEU to OriginServer;
+        BatchResponse from OriginServer to EdgeServerEU;
+        Film from EdgeServerEU to EUUser1;
+        TVSeries from EdgeServerEU to EUUser2;
+        Film from EdgeServerEU to EUUser3;
+        TVSeries from EdgeServerEU to EUUser4;
+        Film from EdgeServerEU to EUUser5;
+        FilmRequest from NAUser1 to EdgeServerNA;
+        TVSeriesRequest from NAUser2 to EdgeServerNA;
+        FilmRequest from NAUser3 to EdgeServerNA;
+        TVSeriesRequest from NAUser4 to EdgeServerNA;
+        FilmRequest from NAUser5 to EdgeServerNA;
+        BatchRequest from EdgeServerNA to OriginServer;
+        BatchResponse from OriginServer to EdgeServerNA;
+        Film from EdgeServerNA to NAUser1;
+        TVSeries from EdgeServerNA to NAUser2;
+        Film from EdgeServerNA to NAUser3;
+        TVSeries from EdgeServerNA to NAUser4;
+        Film from EdgeServerNA to NAUser5;
+        FilmRequest from SAUser1 to EdgeServerSA;
+        TVSeriesRequest from SAUser2 to EdgeServerSA;
+        FilmRequest from SAUser3 to EdgeServerSA;
+        TVSeriesRequest from SAUser4 to EdgeServerSA;
+        FilmRequest from SAUser5 to EdgeServerSA;
+        BatchRequest from EdgeServerSA to OriginServer;
+        BatchResponse from OriginServer to EdgeServerSA;
+        Film from EdgeServerSA to SAUser1;
+        TVSeries from EdgeServerSA to SAUser2;
+        Film from EdgeServerSA to SAUser3;
+        TVSeries from EdgeServerSA to SAUser4;
+        Film from EdgeServerSA to SAUser5;
+        FilmRequest from APACUser1 to EdgeServerAPAC;
+        TVSeriesRequest from APACUser2 to EdgeServerAPAC;
+        FilmRequest from APACUser3 to EdgeServerAPAC;
+        TVSeriesRequest from APACUser4 to EdgeServerAPAC;
+        FilmRequest from APACUser5 to EdgeServerAPAC;
+        BatchRequest from EdgeServerAPAC to OriginServer;
+        BatchResponse from OriginServer to EdgeServerAPAC;
+        Film from EdgeServerAPAC to APACUser1;
+        TVSeries from EdgeServerAPAC to APACUser2;
+        Film from EdgeServerAPAC to APACUser3;
+        TVSeries from EdgeServerAPAC to APACUser4;
+        Film from EdgeServerAPAC to APACUser5;
+        FilmRequest from MEAUser1 to EdgeServerMEA;
+        TVSeriesRequest from MEAUser2 to EdgeServerMEA;
+        FilmRequest from MEAUser3 to EdgeServerMEA;
+        TVSeriesRequest from MEAUser4 to EdgeServerMEA;
+        FilmRequest from MEAUser5 to EdgeServerMEA;
+        BatchRequest from EdgeServerMEA to OriginServer;
+        BatchResponse from OriginServer to EdgeServerMEA;
+        Film from EdgeServerMEA to MEAUser1;
+        TVSeries from EdgeServerMEA to MEAUser2;
+        Film from EdgeServerMEA to MEAUser3;
+        TVSeries from EdgeServerMEA to MEAUser4;
+        Film from EdgeServerMEA to MEAUser5;
+}

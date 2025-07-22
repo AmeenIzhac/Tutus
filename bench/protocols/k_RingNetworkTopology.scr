@@ -1,0 +1,22 @@
+global protocol RingNetworkTopology(role NodeA, role NodeB, role Node3, role Node4, role Node5, role Node6, role Node7, role Node8, role Node9, role Node10, role Node11, role Node12, role Node13, role Node14, role Node15, role Node16, role Node17, role Node18, role Node19, role Node20) {
+    Request from NodeA to NodeB;
+    Request from NodeB to Node3;
+    Request from Node3 to Node4;
+    Request from Node4 to Node5;
+    Request from Node5 to Node6;
+    Request from Node6 to Node7;
+    Request from Node7 to Node8;
+    Request from Node8 to Node9;
+    Request from Node9 to Node10;
+    Request from Node10 to Node11;
+    Response from Node11 to Node12;
+    Response from Node12 to Node13;
+    Response from Node13 to Node14;
+    Response from Node14 to Node15;
+    Response from Node15 to Node16;
+    Response from Node16 to Node17;
+    Response from Node17 to Node18;
+    Response from Node18 to Node19;
+    Response from Node19 to Node20;
+    Response from Node20 to NodeA;
+}

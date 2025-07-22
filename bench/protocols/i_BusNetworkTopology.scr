@@ -1,0 +1,24 @@
+global protocol BusNetworkTopology(role MainCable, role NodeA, role NodeB, role NodeC, role NodeD, role NodeE, role NodeF, role NodeG, role NodeH, role NodeI, role NodeJ) {
+    HostDiscoveryRequest from NodeA to MainCable;
+    NameQuery from MainCable to NodeA;
+    Name from NodeA to MainCable;
+    NameQuery from MainCable to NodeB;
+    Name from NodeB to MainCable;
+    NameQuery from MainCable to NodeC;
+    Name from NodeC to MainCable;
+    NameQuery from MainCable to NodeD;
+    Name from NodeD to MainCable;
+    NameQuery from MainCable to NodeE;
+    Name from NodeE to MainCable;
+    NameQuery from MainCable to NodeF;
+    Name from NodeF to MainCable;
+    NameQuery from MainCable to NodeG;
+    Name from NodeG to MainCable;
+    NameQuery from MainCable to NodeH;
+    Name from NodeH to MainCable;
+    NameQuery from MainCable to NodeI;
+    Name from NodeI to MainCable;
+    NameQuery from MainCable to NodeJ;
+    Name from NodeJ to MainCable;
+    HostDiscoveryResult from MainCable to NodeA;
+}

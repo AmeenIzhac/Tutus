@@ -1,0 +1,70 @@
+global protocol smtp(role S, role Cl) {
+  n220 from S to Cl;
+  Ehlo1 from Cl to S;
+  rec X {
+    choice at S {
+      n250d from S to Cl;
+      continue X;
+    } or {
+      n250 from S to Cl;
+      StartTls from Cl to S;
+      n220 from S to Cl;
+      Ehlo2 from Cl to S;
+      rec X {
+        choice at S {
+          n250d1 from S to Cl;
+          continue X;
+        } or {
+          n2501 from S to Cl;
+          rec Y {
+            Auth from Cl to S;
+            choice at S {
+              n235 from S to Cl;
+              rec Z1 {
+                Mail from Cl to S; 
+                choice at S {
+                  n501 from S to Cl;
+                  continue Z1;
+                } or {
+                  n2502 from S to Cl;
+                  rec Z2 {
+                    choice at Cl {
+                      Rcpt from Cl to S; 
+                      choice at S {
+                        n2503 from S to Cl;
+                        continue Z2;
+                      } 
+                    } or {
+                      Data from Cl to S;
+                      n354 from S to Cl;
+                      too from Cl to S; 
+                      froom from Cl to S; 
+                      rec Z3 {
+                        choice at Cl {
+                          DataLine from Cl to S;
+                          DataLine from Cl to S;
+                          continue Z3;
+                        } or {
+                          Subject from Cl to S;
+                          Subject from Cl to S;
+                          continue Z3;
+                        } or {
+                          EndOfData from Cl to S;
+                          n2504 from S to Cl;
+                          continue Z1;
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            } or {
+              n535 from S to Cl;
+              continue Y;
+            }
+          }
+        }
+      }
+    }
+  }
+}

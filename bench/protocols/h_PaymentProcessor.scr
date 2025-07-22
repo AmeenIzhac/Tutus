@@ -1,0 +1,11 @@
+global protocol PaymentGateway(role Customer, role Merchant, role Processor) {
+    PaymentDetails from Customer to Processor;
+    MerchantInfo from Merchant to Processor;
+    choice at Processor {
+        PaymentAccepted from Processor to Customer;
+        Confirmation from Processor to Merchant;
+    } or {
+        PaymentFailed from Processor to Customer;
+        NotifyFailure from Processor to Merchant;
+    }
+}
