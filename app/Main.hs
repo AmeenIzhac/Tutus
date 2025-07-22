@@ -140,7 +140,7 @@ execFile _opts@MyOptions{..} = do
           end <- result `deepseq` getTime Monotonic
           putStrLn (showG result)
           print (toNanoSecs (diffTimeSpec end start) `div` 1000)  
-        when refactor_effpifo $ do
+        when refactoreffpifo $ do
           let scribble_result = fo 2 g
           start <- getTime Monotonic
           let result = foend2end scribble_result

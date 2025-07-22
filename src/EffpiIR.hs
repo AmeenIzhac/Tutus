@@ -4,7 +4,7 @@ module EffpiIR where
 import Numeric.Natural ( Natural )
 import Data.List ( sort )
 
-import Core ( B, Label )
+import Core ( B, Label, Role )
 import Projection ( Annot(..) )
 
 import GHC.Generics (Generic)
@@ -115,7 +115,7 @@ data TyDecl = Decl Natural String [ChanUB] [(Label, TyBody)]
             deriving (Show, Generic, NFData)
 
 -- | Local type declaration/Role-implementing function
-data RoleTy = MkRoleTy String [ChanUB] TyBody [TyDecl]
+data RoleTy = MkRoleTy Role String [ChanUB] TyBody [TyDecl]
             deriving (Show, Generic, NFData)
 
 -- | Entry point; contains channels and role-implementing function calls
